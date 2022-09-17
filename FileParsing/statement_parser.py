@@ -57,6 +57,8 @@ def is_table_header(line, bank):
     if bank == "www.bankofamerica.com":
         return line.lower() == "PURCHASES AND ADJUSTMENTS".lower()
 
+    return ("transactions" in line)
+
 
 def is_table_footer(line, bank):
     '''Return if the current line is the ending point of the transaction table'''
@@ -67,6 +69,8 @@ def is_table_footer(line, bank):
     if bank == "www.bankofamerica.com":
         return ("total purchases and adjustments for this period" in line.lower())
 
+    return (parse_transaction(line, bank) is None)
+
 
 def parse_transaction(line, bank):
     '''Extract the transaction information from a given string'''
@@ -76,6 +80,8 @@ def parse_transaction(line, bank):
 
     if bank == "www.bankofamerica.com":
         return parse_bofa_transaction(line)
+
+    return parse_generic_transaction(line)
 
 
 def parse_chase_transaction(transaction):
@@ -108,15 +114,49 @@ def parse_bofa_transaction(transaction):
     return None
 
 
-# Beginning of main program
+def parse_generic_transaction(transaction):
+    '''Extract the transaction information from a given string from an arbitrary bank'''
+
+    date, price, vendor = None, None, None
+    arr = transaction.split(" ")
+
+    # Find the date
+    first_date = re.search("\d+/\d+", arr[0])
+    second_date = re.search("\d+/\d+", arr[1])
+
+    if first_date is not None and second_date is not None:
+        date = min(first_date, second_date)
+
+    elif first_date is None:
+        date = second_date
+
+    elif second_date is None:
+        date = first_date
+
+    # Find the price
+    price = re.search("\d+/.\d+", arr[-1])
+
+    # Find the vendor
+    if second_date is None:
+        vendor = " ".join(arr[1][-1])
+    else:
+        vendor = " ".join(arr[2][-1])
+
+    # Return results
+    if "/" in date and is_float(price):
+        return (date, price, vendor)
+
+    return None
+
+
+# ------------------------------------------ #
+# Start of main program
                 
 pdf_path = sys.argv[1]
 pdf_obj = pdfplumber.open(pdf_path)
 
 bank = get_bank(pdf_obj.pages)
 end_digits = get_end_digits(pdf_obj.pages[0])
-start_date, end_date = ()
-
 
 print("Bank: " + bank)
 print("Credit Card: " + end_digits)
