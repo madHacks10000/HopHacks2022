@@ -1,10 +1,14 @@
-import pdfplumber
-import tabula
-import pandas as pd
+import sys
 import re
+import pdfplumber
 
-# Return if a string can be converted to a float
+
+
+# Helper Functions
+
 def is_float(str):
+    '''Return if a string can be converted to a float'''
+
     try:
         float(str)
         return True
@@ -12,7 +16,10 @@ def is_float(str):
         return False
 
 
+
 def get_bank(pages):
+    '''Identify the bank referenced in the statement'''
+
     bank_urls = ["www.chase.com", "www.bankofamerica.com"]
     bank_frequency = {key: 0 for key in bank_urls}
 
@@ -27,7 +34,10 @@ def get_bank(pages):
     return max(bank_frequency, key=bank_frequency.get)
 
 
+
 def get_end_digits(page):
+    '''Identify the last four digits of the credit card in the statement'''
+
     account_num_exps = {"Account Number", "Account #"}
 
     lines = page.extract_text().split('\n')
@@ -41,6 +51,8 @@ def get_end_digits(page):
 
 
 def is_table_header(line, bank):
+    '''Return if the current line is the starting point of the transaction table'''
+
     if bank == "www.chase.com":
         return line.lower() == "PURCHASE".lower()
 
@@ -49,18 +61,18 @@ def is_table_header(line, bank):
 
 
 def is_table_footer(line, bank):
+    '''Return if the current line is the ending point of the transaction table'''
+
     if bank == "www.chase.com":
         return "totals year-to-date" in line.lower()
 
     if bank == "www.bankofamerica.com":
-        print(line.lower())
-        print("total purchases and adjustments for this period")
-        print("\n")
-
-        return "total purchases and adjustments for this period" in line.lower()
+        return ("total purchases and adjustments for this period" in line.lower())
 
 
 def parse_transaction(line, bank):
+    '''Extract the transaction information from a given string'''
+
     if bank == "www.chase.com":
         return parse_chase_transaction(line)
 
@@ -69,7 +81,8 @@ def parse_transaction(line, bank):
 
 
 def parse_chase_transaction(transaction):
-    #print(transaction)
+    '''Extract the transaction information from a given Chase string'''
+
     arr = transaction.split(" ")
 
     date = arr[0]
@@ -81,19 +94,34 @@ def parse_chase_transaction(transaction):
 
     return None
     
+
 def parse_bofa_transaction(transaction):
-    #print(transaction)
+    '''Extract the transaction information from a given BofA string'''
+
+    arr = transaction.split(" ")
+
+    date = arr[1]
+    price = arr[-1]
+    vendor = " ".join(arr[2:-3])
+
+    if "/" in date and is_float(price):
+        return (date, price, vendor)
+
     return None
 
 
-
-
+# Beginning of main program
                 
-pdf_path = "BofAStatement.pdf"
+pdf_path = sys.argv[1]
 pdf_obj = pdfplumber.open(pdf_path)
 
 bank = get_bank(pdf_obj.pages)
 end_digits = get_end_digits(pdf_obj.pages[0])
+start_date, end_date = ()
+
+
+print("Bank: " + bank)
+print("Credit Card: " + end_digits)
 
 is_table = False
 
@@ -101,19 +129,18 @@ for page in pdf_obj.pages:
     lines = page.extract_text().split('\n')
 
     for line in lines:
-        #print(line)
         if not is_table:
             is_table = is_table_header(line, bank)
             continue
 
         if is_table_footer(line, bank):
-            break # Only breaks out of first page
+            exit()
 
         info = parse_transaction(line, bank)
 
         if info:
             date, price, vendor = info
-            #print("Date: " + date + ", Price: " + price + ", Vendor: " + vendor.strip())
+            print("Date: " + date + ", Price: " + price + ", Vendor: " + vendor.strip())
 
 
 
