@@ -17,6 +17,8 @@
 		52FBA89928D5756D0065415E /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 52FBA89828D5756D0065415E /* FirebaseStorage */; };
 		52FBA89B28D5756D0065415E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 52FBA89A28D5756D0065415E /* FirebaseAuth */; };
 		52FBA89D28D5756D0065415E /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 52FBA89C28D5756D0065415E /* FirebaseDatabase */; };
+		6B420E7228D5F7BF009643FB /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6B420E7128D5F7BF009643FB /* Storyboard.storyboard */; };
+		6B420E7628D60A52009643FB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6B420E7528D60A52009643FB /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		52B2F90928D568B100F8D576 /* ReceiptsAndMoreUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReceiptsAndMoreUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		52B2F90D28D568B100F8D576 /* ReceiptsAndMoreUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptsAndMoreUITests.swift; sourceTree = "<group>"; };
 		52B2F90F28D568B100F8D576 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6B420E7128D5F7BF009643FB /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
+		6B420E7528D60A52009643FB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +87,7 @@
 		52B2F8E428D568A600F8D576 = {
 			isa = PBXGroup;
 			children = (
+				6B420E7128D5F7BF009643FB /* Storyboard.storyboard */,
 				52B2F8EF28D568A600F8D576 /* ReceiptsAndMore */,
 				52B2F90128D568B100F8D576 /* ReceiptsAndMoreTests */,
 				52B2F90C28D568B100F8D576 /* ReceiptsAndMoreUITests */,
@@ -106,6 +111,7 @@
 				52B2F8F028D568A600F8D576 /* ReceiptsAndMoreApp.swift */,
 				52B2F8F228D568A600F8D576 /* ContentView.swift */,
 				52B2F8F428D568B100F8D576 /* Assets.xcassets */,
+				6B420E7528D60A52009643FB /* GoogleService-Info.plist */,
 				52B2F8F928D568B100F8D576 /* Info.plist */,
 				52B2F8F628D568B100F8D576 /* Preview Content */,
 			);
@@ -251,7 +257,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				52B2F8F828D568B100F8D576 /* Preview Assets.xcassets in Resources */,
+				6B420E7628D60A52009643FB /* GoogleService-Info.plist in Resources */,
 				52B2F8F528D568B100F8D576 /* Assets.xcassets in Resources */,
+				6B420E7228D5F7BF009643FB /* Storyboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,7 +447,7 @@
 				DEVELOPMENT_TEAM = N9ZK99QT58;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = ReceiptsAndMore/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -461,7 +469,7 @@
 				DEVELOPMENT_TEAM = N9ZK99QT58;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = ReceiptsAndMore/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
