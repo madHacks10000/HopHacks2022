@@ -23,7 +23,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct ReceiptsAndMoreApp: App {
-    
+    @StateObject var dataManager = DataManager()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     var body: some Scene {
