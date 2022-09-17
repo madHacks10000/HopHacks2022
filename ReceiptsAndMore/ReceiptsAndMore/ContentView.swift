@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct ContentView: View {
     @State private var email = ""
@@ -28,27 +29,29 @@ struct ContentView: View {
                     .font(.system(size: 35, weight: .bold))
                     //.offset(x: -70, y: -50)
                 
-                TextField("Email", text: $email)
+                TextField("", text: $email)
+                    .offset(x: 20, y: 20)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
                     .placeholder(when: email.isEmpty) {
                         Text("Email")
                             .foregroundColor(.white)
                             .bold()
-                            .offset(x: 20)
+                            .offset(x: 25, y: 18)
                     }
                 Rectangle()
                     .frame(width: 300, height: 1)
                     .foregroundColor(.white)
                 
-                SecureField("Password", text: $password)
+                SecureField("", text: $password)
+                    .offset(x: 20, y: 20)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
                     .placeholder(when: password.isEmpty) {
                         Text("Password")
                             .foregroundColor(.white)
                             .bold()
-                            .offset(x: 20)
+                            .offset(x: 25, y: 18)
                     }
                 
                 Rectangle()
@@ -56,7 +59,7 @@ struct ContentView: View {
                     .foregroundColor(.white)
                 
                 Button {
-                    // sign up
+                    register()
                 } label: {
                     Text("Sign Up")
                         .bold()
@@ -68,7 +71,7 @@ struct ContentView: View {
                 }
                  
                 Button {
-                    // sign up
+                    login()
                 } label: {
                     Text("Already have an account? Log in")
                         .bold()
@@ -82,6 +85,22 @@ struct ContentView: View {
             .frame(width: 350)
         }
         .ignoresSafeArea()
+    }
+    
+    func login() {
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            if error != nil {
+                print(error!.localizedDescription)
+            }
+        }
+    }
+    
+    func register() {
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            if error != nil {
+                print(error!.localizedDescription)
+            }
+        }
     }
 }
 
