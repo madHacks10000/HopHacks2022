@@ -20,6 +20,10 @@
 		6B420E8528D6E3A9009643FB /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 6B420E8428D6E3A9009643FB /* FirebaseDatabase */; };
 		6B420E8728D6E3A9009643FB /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 6B420E8628D6E3A9009643FB /* FirebaseFirestore */; };
 		6B420E8928D6E3A9009643FB /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 6B420E8828D6E3A9009643FB /* FirebaseStorage */; };
+		6B420E8B28D71930009643FB /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B420E8A28D71930009643FB /* LoginViewController.swift */; };
+		6B420E8D28D71948009643FB /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B420E8C28D71948009643FB /* HomeViewController.swift */; };
+		6B420E8F28D72B1E009643FB /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B420E8E28D72B1E009643FB /* ListView.swift */; };
+		6B420E9128D72D02009643FB /* LoadScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B420E9028D72D02009643FB /* LoadScreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +58,10 @@
 		52B2F90F28D568B100F8D576 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6B420E7128D5F7BF009643FB /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		6B420E7528D60A52009643FB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6B420E8A28D71930009643FB /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		6B420E8C28D71948009643FB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		6B420E8E28D72B1E009643FB /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
+		6B420E9028D72D02009643FB /* LoadScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +120,10 @@
 			isa = PBXGroup;
 			children = (
 				52B2F8F028D568A600F8D576 /* ReceiptsAndMoreApp.swift */,
+				6B420E8E28D72B1E009643FB /* ListView.swift */,
+				6B420E9028D72D02009643FB /* LoadScreen.swift */,
+				6B420E8A28D71930009643FB /* LoginViewController.swift */,
+				6B420E8C28D71948009643FB /* HomeViewController.swift */,
 				52B2F8F228D568A600F8D576 /* ContentView.swift */,
 				52B2F8F428D568B100F8D576 /* Assets.xcassets */,
 				6B420E7528D60A52009643FB /* GoogleService-Info.plist */,
@@ -249,7 +261,7 @@
 			);
 			mainGroup = 52B2F8E428D568A600F8D576;
 			packageReferences = (
-				6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */,
+				6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 52B2F8EE28D568A600F8D576 /* Products */;
 			projectDirPath = "";
@@ -295,8 +307,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B420E8B28D71930009643FB /* LoginViewController.swift in Sources */,
 				52B2F8F328D568A600F8D576 /* ContentView.swift in Sources */,
+				6B420E8F28D72B1E009643FB /* ListView.swift in Sources */,
 				52B2F8F128D568A600F8D576 /* ReceiptsAndMoreApp.swift in Sources */,
+				6B420E8D28D71948009643FB /* HomeViewController.swift in Sources */,
+				6B420E9128D72D02009643FB /* LoadScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -618,7 +634,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */ = {
+		6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
@@ -631,27 +647,27 @@
 /* Begin XCSwiftPackageProductDependency section */
 		6B420E8028D6E3A9009643FB /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */;
+			package = 6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
 		};
 		6B420E8228D6E3A9009643FB /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */;
+			package = 6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
 		6B420E8428D6E3A9009643FB /* FirebaseDatabase */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */;
+			package = 6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseDatabase;
 		};
 		6B420E8628D6E3A9009643FB /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */;
+			package = 6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
 		};
 		6B420E8828D6E3A9009643FB /* FirebaseStorage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */;
+			package = 6B420E7F28D6E3A9009643FB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */

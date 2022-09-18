@@ -32,7 +32,8 @@ struct ReceiptsAndMoreApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                ContentView()
+                //ContentView()
+                ListView()
             }
         }
     }

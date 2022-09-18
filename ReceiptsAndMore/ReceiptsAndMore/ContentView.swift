@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 import Firebase
 
 struct ContentView: View {
@@ -79,6 +80,8 @@ struct ContentView: View {
                         .foregroundColor(.white)
                 }
                  
+                
+                
                 Button {
                     login()
                 } label: {
@@ -87,6 +90,8 @@ struct ContentView: View {
                         .foregroundColor(.white)
                         .font(.system(size: 15))
                 }
+                
+                
                 .padding(.top)
                 
                 
@@ -97,6 +102,8 @@ struct ContentView: View {
                 Auth.auth().addStateDidChangeListener { auth, user in
                     if user != nil {
                         userIsLoggedIn.toggle()
+                    } else {
+                        
                     }
                     
                 }
@@ -105,13 +112,26 @@ struct ContentView: View {
         .ignoresSafeArea()
     }
     
-    func login() {
+    func login() { //can get user's account data from the object that's passed to the callback method
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if error != nil {
                 print(error!.localizedDescription)
+            } else {
+                // idk
+            }
+                
             }
         }
-    }
+        /* if Auth.auth().currentUser != nil {
+         let user = Auth.auth().currentUser
+         if let user = user {
+             let uid = user.uid
+             let email = user.email
+         }
+     } else {
+         // no user is signed in
+     }*/
+    //}
     
     func register() {
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
