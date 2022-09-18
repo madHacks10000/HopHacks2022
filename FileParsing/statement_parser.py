@@ -46,7 +46,7 @@ def get_bank(pages):
 def get_end_digits(page):
     '''Identify the last four digits of the credit card in the statement'''
 
-    account_num_exps = {"Account Number", "Account #"}
+    account_num_exps = {"Account Number", "Account #", "Account Ending In "}
 
     lines = page.extract_text().split('\n')
 
@@ -54,8 +54,11 @@ def get_end_digits(page):
         for exp in account_num_exps:
             if exp.lower() in line.lower():
                 cc_num = re.search("\d{4}\s\d{4}\s\d{4}\s\d{4}", line)
-                my_end_digits = cc_num.group(0).split(" ")[-1]
-                return my_end_digits
+
+                if cc_num is None:
+                    return re.search("\d{4}", line).group(0)
+                
+                return cc_num.group(0).split(" ")[-1]
 
 
 def is_table_header(line, bank):
@@ -67,7 +70,7 @@ def is_table_header(line, bank):
     if bank == "bankofamerica":
         return line.lower() == "PURCHASES AND ADJUSTMENTS".lower()
 
-    return ("transactions" in line)
+    return ("transactions" == line.lower().strip())
 
 
 def is_table_footer(line, bank):
@@ -79,7 +82,7 @@ def is_table_footer(line, bank):
     if bank == "bankofamerica":
         return ("total purchases and adjustments for this period" in line.lower())
 
-    return (parse_transaction(line, bank) is None)
+    return ("total" in line.lower())
 
 
 def parse_transaction(line, bank):
@@ -116,7 +119,7 @@ def parse_bofa_transaction(transaction):
 
     date = arr[1]
     price = arr[-1]
-    vendor = " ".join(arr[2:-3])
+    vendor = " ".join(arr[2:-3]).split("  ")[0]
 
     if "/" in date and is_float(price):
         return (date, price, vendor)
@@ -128,29 +131,47 @@ def parse_generic_transaction(transaction):
     '''Extract the transaction information from a given string from an arbitrary bank'''
 
     date, price, vendor = None, None, None
-    arr = transaction.split(" ")
+    arr = transaction.lower().split(" ")
+    
+    # Return false if the entry is too short or is a payment
+    if len(arr) == 1 or arr[-2] == "-":
+        return None
+
 
     # Find the date
     first_date = re.search("\d+/\d+", arr[0])
     second_date = re.search("\d+/\d+", arr[1])
 
-    if first_date is not None and second_date is not None:
+    word_months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+
+    # Case 0: No date found 
+    if first_date is None and second_date is None and arr[0] not in word_months:
+        return None
+
+    # Case 1: Two numeric dates
+    elif first_date is not None and second_date is not None:
         date = min(first_date.group(0), second_date.group(0))
 
-    elif first_date is None:
+    # Case 2: One numeric date
+    elif first_date is None and second_date is not None:
         date = second_date.group(0)
 
-    elif second_date is None:
+    elif first_date is None and second_date is not None:
         date = first_date.group(0)
 
+    # Case 3: String date
+    if arr[0] in word_months:
+        date = str(word_months.index(arr[0]) + 1) + "/" + arr[1]
+
+
     # Find the price
-    price = re.search("\d+/.\d+", arr[-1]).group(0)
+    price = re.search("\d+\.\d+", arr[-1]).group(0)
+
+
 
     # Find the vendor
-    if second_date is None:
-        vendor = " ".join(arr[1][-1])
-    else:
-        vendor = " ".join(arr[2][-1])
+    vendor = " ".join(arr[2:-2])
+
 
     # Return results
     if "/" in date and is_float(price):
@@ -171,9 +192,6 @@ pdf_obj = pdfplumber.open(pdf_path)
 bank = get_bank(pdf_obj.pages)
 end_digits = get_end_digits(pdf_obj.pages[0])
 
-#print("Bank: " + bank)
-#print("Credit Card: " + end_digits)
-
 is_table = False
 
 for page in pdf_obj.pages:
@@ -193,7 +211,6 @@ for page in pdf_obj.pages:
 
         if info:
             date, price, vendor = info
-            #print("Date: " + date + ", Price: " + price + ", Vendor: " + vendor.strip())
 
             new_transaction = {
                 "bank": bank,
