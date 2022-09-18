@@ -18,8 +18,11 @@ def is_float(str):
 def get_bank(pages):
     '''Identify the bank referenced in the statement'''
 
+    # To be able to support arbitrary banks, do not fix a list of URLs. Keep a dynamic hashmap
     bank_urls = ["www.chase.com", "www.bankofamerica.com"]
     bank_frequency = {key: 0 for key in bank_urls}
+
+    found_url = False
 
     for page in pages:
         lines = page.extract_text().split('\n')
@@ -27,9 +30,14 @@ def get_bank(pages):
         for line in lines:
             for bank_url in bank_urls:
                 if bank_url.lower() in line.lower():
+                    found_url = True
                     bank_frequency[bank_url] += 1
 
-    return max(bank_frequency, key=bank_frequency.get)
+    if found_url:
+        return max(bank_frequency, key=bank_frequency.get)
+
+    print("Unknown bank!")
+    exit()
 
 
 
