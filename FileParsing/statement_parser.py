@@ -180,44 +180,42 @@ def parse_generic_transaction(transaction):
     return None
 
 
-# ------------------------------------------ #
-# Start of main program
+def parse_pdf(filename):
+    # Create array of dictionaries to track all transactions in PDF
+    transactions_info = []
 
-# Create array of dictionaries to track all transactions in PDF
-transactions_info = []
+    pdf_path = sys.argv[1]
+    pdf_obj = pdfplumber.open(pdf_path)
 
-pdf_path = sys.argv[1]
-pdf_obj = pdfplumber.open(pdf_path)
+    bank = get_bank(pdf_obj.pages)
+    end_digits = get_end_digits(pdf_obj.pages[0])
 
-bank = get_bank(pdf_obj.pages)
-end_digits = get_end_digits(pdf_obj.pages[0])
+    is_table = False
 
-is_table = False
+    for page in pdf_obj.pages:
+        lines = page.extract_text().split('\n')
 
-for page in pdf_obj.pages:
-    lines = page.extract_text().split('\n')
+        for line in lines:
+            if not is_table:
+                is_table = is_table_header(line, bank)
+                continue
 
-    for line in lines:
-        if not is_table:
-            is_table = is_table_header(line, bank)
-            continue
+            if is_table_footer(line, bank):
+                return transactions_info
 
-        if is_table_footer(line, bank):
-            output = json.dumps(transactions_info)
-            print(output)
-            exit()
+            info = parse_transaction(line, bank)
 
-        info = parse_transaction(line, bank)
+            if info:
+                date, price, vendor = info
 
-        if info:
-            date, price, vendor = info
+                new_transaction = {
+                    "bank": bank,
+                    "end_digits": end_digits,
+                    "date": date,
+                    "price": price,
+                    "vendor": vendor.strip()
+                }
 
-            new_transaction = {
-                "bank": bank,
-                "end_digits": end_digits,
-                "date": date,
-                "price": price,
-                "vendor": vendor.strip()
-            }
+                transactions_info.append(new_transaction)
 
-            transactions_info.append(new_transaction)
+    return transactions_info
