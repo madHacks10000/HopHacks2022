@@ -8,10 +8,12 @@
 import SwiftUI
 import Firebase
 import FirebaseCore
-//import FirebaseFirestore
+import FirebaseFirestore
 
 class DataManager: ObservableObject {
     @Published var dogs: [Page] = []
+    
+    
     
     init() {
         fetchStuff()
@@ -34,7 +36,7 @@ class DataManager: ObservableObject {
                     let id = data["id"] as? String ?? ""
                     
                     let dog = Page(id: id, company: company)
-                    self.info.append(dog)
+                    self.dogs.append(dog)
                 }
             }
         }
