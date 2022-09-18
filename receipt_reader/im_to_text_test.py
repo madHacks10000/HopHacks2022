@@ -72,10 +72,6 @@ def check_date(date_buffer):
 	#run through buffer
 	for x in range(len(date_buffer)):
 		full_string += date_buffer[x]
-		#checks for correct date month and year
-		# if (dmy_check and x != 2 and x!= 5):
-		# 	if (not date_buffer[x].isnumeric()):
-		# 		dmy_check == False
 	if (dmy_check == correct_slashes == True):
 		return full_string
 	return None
@@ -148,16 +144,16 @@ def process_text(raw_text):
 		if (not card_done):
 			if (in_card and ((not word.isnumeric()) and d.check(word))):
 				in_card = False
-				print("CLOSE")
+				# print("CLOSE")
 				if (found_digit):
-					print("DONE")
+					# print("DONE")
 					card_done = True
 			if word.strip(":-;") in card_words:
-				print("FOUND")
+				# print("FOUND")
 				in_card = True
 				card_number = ""
 			elif (in_card and word.strip("¥hx*#k. ").isnumeric()): 
-				print("ADDED")
+				# print("ADDED")
 				card_number+=word.strip("¥hx*#k. ")
 				found_digit = True
 
@@ -178,8 +174,8 @@ def process_text(raw_text):
 				found_digit_tot = True
 
 
-		print(word)
-	print(raw_text)
+		# print(word)
+	# print(raw_text)
 	print("Store Name:", store_name)
 	print("Date:",date)
 	print("Time:",time)
@@ -187,34 +183,37 @@ def process_text(raw_text):
 	print("Card Number:",card_number)
 	return [store_name,date,time,total,card_number]
 
-if __name__ == '__main__':
-	count = 1
-	for arg in sys.argv[1:]:
-		#do work with arg! arg is a string type!
-		with open(arg) as fp:
-			print("Processing Receipt #" + str(count))
-			# If you don't have tesseract executable in your PATH, include the following:
-			pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
-			
-			# img = Image.open(arg)
-			img = cv2.imread(arg)
+"""
+convert image takes a list of file paths
 
-			img = cv2.resize(img, None, fx=1.2, fy=1.2, interpolation=cv2.INTER_CUBIC)
-
-			img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-			kernel = np.ones((1,1), np.uint8)
-			img = cv2.dilate(img, kernel, iterations=1)
-			img = cv2.erode(img, kernel, iterations=1)
-
-			img = cv2.threshold(cv2.medianBlur(img, 3), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+returns an array of store name, date, time, total, card number
 
 
+"""
 
 
-			#converting image to text
-			raw_text = pytesseract.image_to_string(img,)
-			synth_text = process_text(raw_text)
-		print()
-		count+=1
+def convert_image(arg):
+	#do work with arg! arg is a string type!
+	with open(arg) as fp:
+		# If you don't have tesseract executable in your PATH, include the following:
+		pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+		
+		# img = Image.open(arg)
+		img = cv2.imread(arg)
+
+		img = cv2.resize(img, None, fx=1.2, fy=1.2, interpolation=cv2.INTER_CUBIC)
+
+		img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+		kernel = np.ones((1,1), np.uint8)
+		img = cv2.dilate(img, kernel, iterations=1)
+		img = cv2.erode(img, kernel, iterations=1)
+
+		img = cv2.threshold(cv2.medianBlur(img, 3), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+		#converting image to text
+		raw_text = pytesseract.image_to_string(img,)
+		synth_text = process_text(raw_text)
+		return synth_text
+
+# convert_image(r"C:\Users\OwenJ\OneDrive\Desktop\HopHacks2022\receipt_reader\Image_rec.jpeg")
 
