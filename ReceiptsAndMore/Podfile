@@ -7,6 +7,11 @@ target 'ReceiptsAndMore' do
 
   # Pods for ReceiptsAndMore
   pod 'Firebase/Core'
+  pod 'Firebase/Database'
+  pod 'Firebase/Storage'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Firestore'
+  
   target 'ReceiptsAndMoreTests' do
     inherit! :search_paths
     # Pods for testing
