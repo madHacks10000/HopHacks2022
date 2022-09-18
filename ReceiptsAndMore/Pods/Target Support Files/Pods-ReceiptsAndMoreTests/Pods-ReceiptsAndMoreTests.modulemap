@@ -1,6 +1,0 @@
-framework module Pods_ReceiptsAndMoreTests {
-  umbrella header "Pods-ReceiptsAndMoreTests-umbrella.h"
-
-  export *
-  module * { export * }
-}

@@ -15,7 +15,7 @@ struct ContentView: View {
     
     var body: some View {
         if userIsLoggedIn {
-            ListView()
+            content
         } else {
             content
         }
@@ -87,6 +87,7 @@ struct ContentView: View {
                         .foregroundColor(.white)
                         .font(.system(size: 15))
                 }
+                .padding(.top)
                 
                 
                 Spacer()

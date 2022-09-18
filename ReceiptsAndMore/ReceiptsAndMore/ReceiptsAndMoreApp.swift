@@ -23,7 +23,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct ReceiptsAndMoreApp: App {
-    @StateObject var dataManager = DataManager()
+    //@StateObject var dataManager = DataManager()
+    init() {
+        FirebaseApp.configure()
+    }
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     var body: some Scene {
