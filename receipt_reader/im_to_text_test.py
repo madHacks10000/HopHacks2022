@@ -111,7 +111,7 @@ def process_text(raw_text):
 	for count, word in enumerate(raw_text.split()):
 		if word != "":
 			word = word.lower()
-			word = word.strip("$#@!%^&*()~`'\"'")
+			word = word.strip("$#@!%^&*()~`’'\"'")
 
 			#fix strange date formats
 			if '-' in word:
