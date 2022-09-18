@@ -1,6 +1,7 @@
+import pdfplumber
 import sys
 import re
-import pdfplumber
+import json
 
 # Helper Functions
 
@@ -16,27 +17,28 @@ def is_float(str):
 
 
 def get_bank(pages):
-    '''Identify the bank referenced in the statement'''
+    '''Identify the bank referenced in the statement by associating it with the most common URL'''
 
-    # To be able to support arbitrary banks, do not fix a list of URLs. Keep a dynamic hashmap
-    bank_urls = ["www.chase.com", "www.bankofamerica.com"]
-    bank_frequency = {key: 0 for key in bank_urls}
-
-    found_url = False
+    bank_frequency = {}
 
     for page in pages:
         lines = page.extract_text().split('\n')
 
         for line in lines:
-            for bank_url in bank_urls:
-                if bank_url.lower() in line.lower():
-                    found_url = True
-                    bank_frequency[bank_url] += 1
+            result = re.search("www\.([a-zA-Z]+)\.com", line.lower())
 
-    if found_url:
+            if result is not None:
+                bank = result.group(1)
+
+                if bank in bank_frequency.keys():
+                    bank_frequency[bank] += 1
+                else:
+                    bank_frequency[bank] = 1
+
+    if (len(bank_frequency) > 0):
         return max(bank_frequency, key=bank_frequency.get)
 
-    print("Unknown bank!")
+    print("No banks found!")
     exit()
 
 
@@ -51,18 +53,18 @@ def get_end_digits(page):
     for line in lines:
         for exp in account_num_exps:
             if exp.lower() in line.lower():
-                cc_num = re.findall("\d{4}\s\d{4}\s\d{4}\s\d{4}", line)[0]
-                my_end_digits = cc_num.split(" ")[-1]
+                cc_num = re.search("\d{4}\s\d{4}\s\d{4}\s\d{4}", line)
+                my_end_digits = cc_num.group(0).split(" ")[-1]
                 return my_end_digits
 
 
 def is_table_header(line, bank):
     '''Return if the current line is the starting point of the transaction table'''
 
-    if bank == "www.chase.com":
+    if bank == "chase":
         return line.lower() == "PURCHASE".lower()
 
-    if bank == "www.bankofamerica.com":
+    if bank == "bankofamerica":
         return line.lower() == "PURCHASES AND ADJUSTMENTS".lower()
 
     return ("transactions" in line)
@@ -71,10 +73,10 @@ def is_table_header(line, bank):
 def is_table_footer(line, bank):
     '''Return if the current line is the ending point of the transaction table'''
 
-    if bank == "www.chase.com":
+    if bank == "chase":
         return "totals year-to-date" in line.lower()
 
-    if bank == "www.bankofamerica.com":
+    if bank == "bankofamerica":
         return ("total purchases and adjustments for this period" in line.lower())
 
     return (parse_transaction(line, bank) is None)
@@ -83,10 +85,10 @@ def is_table_footer(line, bank):
 def parse_transaction(line, bank):
     '''Extract the transaction information from a given string'''
 
-    if bank == "www.chase.com":
+    if bank == "chase":
         return parse_chase_transaction(line)
 
-    if bank == "www.bankofamerica.com":
+    if bank == "bankofamerica":
         return parse_bofa_transaction(line)
 
     return parse_generic_transaction(line)
@@ -133,16 +135,16 @@ def parse_generic_transaction(transaction):
     second_date = re.search("\d+/\d+", arr[1])
 
     if first_date is not None and second_date is not None:
-        date = min(first_date, second_date)
+        date = min(first_date.group(0), second_date.group(0))
 
     elif first_date is None:
-        date = second_date
+        date = second_date.group(0)
 
     elif second_date is None:
-        date = first_date
+        date = first_date.group(0)
 
     # Find the price
-    price = re.search("\d+/.\d+", arr[-1])
+    price = re.search("\d+/.\d+", arr[-1]).group(0)
 
     # Find the vendor
     if second_date is None:
@@ -159,15 +161,18 @@ def parse_generic_transaction(transaction):
 
 # ------------------------------------------ #
 # Start of main program
-                
+
+# Create array of dictionaries to track all transactions in PDF
+transactions_info = []
+
 pdf_path = sys.argv[1]
 pdf_obj = pdfplumber.open(pdf_path)
 
 bank = get_bank(pdf_obj.pages)
 end_digits = get_end_digits(pdf_obj.pages[0])
 
-print("Bank: " + bank)
-print("Credit Card: " + end_digits)
+#print("Bank: " + bank)
+#print("Credit Card: " + end_digits)
 
 is_table = False
 
@@ -180,10 +185,22 @@ for page in pdf_obj.pages:
             continue
 
         if is_table_footer(line, bank):
+            output = json.dumps(transactions_info)
+            print(output)
             exit()
 
         info = parse_transaction(line, bank)
 
         if info:
             date, price, vendor = info
-            print("Date: " + date + ", Price: " + price + ", Vendor: " + vendor.strip())
+            #print("Date: " + date + ", Price: " + price + ", Vendor: " + vendor.strip())
+
+            new_transaction = {
+                "bank": bank,
+                "end_digits": end_digits,
+                "date": date,
+                "price": price,
+                "vendor": vendor.strip()
+            }
+
+            transactions_info.append(new_transaction)

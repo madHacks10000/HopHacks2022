@@ -16,7 +16,7 @@
 
 
 def count_word_overlap(a, b):
-    ''' Counts the number of distinct shared words across two sentences'''
+    ''' Count the number of distinct shared words across two sentences'''
 
     arr1 = a.lower().split(" ")
     arr2 = b.lower().split(" ")
